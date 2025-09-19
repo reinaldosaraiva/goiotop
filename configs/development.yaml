@@ -1,0 +1,109 @@
+# Development configuration for goiotop
+# Debug-friendly settings for development and testing
+
+app:
+  name: goiotop-dev
+  version: 1.0.0-dev
+  mode: development
+  shutdown_timeout: 5s # Quick shutdown for development
+  health_check_period: 10s # Frequent health checks
+
+collection:
+  interval: 1s # Frequent collection for testing
+  timeout: 3s
+  batch_size: 10 # Small batches for debugging
+  max_retries: 1
+  retry_delay: 500ms
+  enable_cpu: true
+  enable_memory: true
+  enable_disk: true
+  enable_network: true
+  enable_process: true
+  enable_gpu: true # Enable all features for testing
+
+  process_filter:
+    min_cpu_percent: 0.0 # Show all processes
+    min_memory_percent: 0.0
+    exclude_kernel: false
+    top_n: 100
+    include_patterns: []
+    exclude_patterns: []
+
+  collector_options:
+    include_idle: true # Include everything for debugging
+    include_kernel: true
+    include_system_procs: true
+    process_limit: 50 # Lower limit for faster debugging
+    sort_by: cpu
+    min_cpu_threshold: 0.0
+    min_mem_threshold: 0.0
+    sample_duration: 500ms # Quick sampling
+    enable_pressure: true
+    enable_gpu: true # Test GPU features
+
+display:
+  refresh_rate: 1s # Frequent updates for debugging
+  max_rows: 30
+  show_system_stats: true
+  show_process_list: true
+  show_graphs: true # Enable all visualizations
+  graph_history: 30s
+  color_scheme: default
+  date_format: "2006-01-02"
+  time_format: "15:04:05.000" # Include milliseconds
+  enable_pagination: true
+  page_size: 10 # Small pages for testing pagination
+
+export:
+  enabled: true # Enable for testing export functionality
+  format: json # Human-readable format
+  destination: file
+  interval: 30s
+  buffer_size: 100
+  compression: false # No compression for readability
+  batch_size: 10
+
+  prometheus:
+    enabled: true
+    port: 9091 # Different port to avoid conflicts
+    path: /metrics
+    namespace: goiotop
+    subsystem: dev
+    labels:
+      environment: development
+      developer: ${USER}
+
+  file:
+    directory: ./dev-data
+    file_pattern: "dev_metrics_%s.json"
+    max_file_size: 10485760 # 10MB - smaller for testing
+    max_files: 5
+    rotate_daily: false # Don't rotate in dev
+    compress: false
+    buffer_size: 1024
+    flush_timeout: 1s # Quick flush for debugging
+
+logging:
+  level: debug # Verbose logging
+  format: text # Human-readable format
+  output: stdout # Output to console
+  file: ./logs/dev-goiotop.log
+  max_size: 10 # megabytes
+  max_age: 7 # days
+  max_backups: 3
+  compress: false
+  enable_caller: true # Show caller information
+  enable_stacktrace: true # Enable stack traces
+  fields:
+    environment: development
+    developer: ${USER}
+
+repository:
+  type: memory # In-memory for fast development
+  connection_url: "" # Not needed for memory
+  max_connections: 5
+  max_idle_conns: 2
+  conn_max_lifetime: 10m
+  conn_max_idle_time: 5m
+  retention_days: 1 # Short retention for development
+  cleanup_interval: 1h # Frequent cleanup for testing

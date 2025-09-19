@@ -1,0 +1,220 @@
+# Default configuration for goiotop
+# This configuration file provides sensible defaults for all settings
+
+app:
+  name: goiotop
+  version: 1.0.0
+  mode: production # Options: production, development, test
+  shutdown_timeout: 10s
+  health_check_period: 30s
+
+collection:
+  interval: 2s
+  timeout: 5s
+  batch_size: 100
+  max_retries: 3
+  retry_delay: 1s
+  enable_cpu: true
+  enable_memory: true
+  enable_disk: true
+  enable_network: true
+  enable_process: true
+  enable_gpu: false # GPU metrics disabled by default
+
+  process_filter:
+    min_cpu_percent: 0.0
+    min_memory_percent: 0.0
+    exclude_kernel: false
+    top_n: 20
+    include_patterns: []
+    exclude_patterns: []
+
+  collector_options:
+    # Matches domain DefaultCollectionOptions()
+    include_idle: true        # Include idle processes
+    include_kernel: true      # Include kernel threads
+    include_system_procs: false # Include system processes (PID < 100)
+    process_limit: 100        # Maximum number of processes to collect
+    sort_by: cpu              # Sort processes by: cpu, memory, pid, name
+    min_cpu_threshold: 0.0    # Minimum CPU usage to include process
+    min_mem_threshold: 0.0    # Minimum memory usage to include process
+    sample_duration: 1s       # Duration for sampling CPU usage
+    enable_pressure: true     # Enable pressure stall information (Linux)
+    enable_gpu: false         # Enable GPU metrics collection
+
+display:
+  refresh_rate: 2s
+  max_rows: 20
+  show_system_stats: true
+  show_process_list: true
+  show_graphs: true
+  graph_history: 60s
+  color_scheme: default
+  date_format: "2006-01-02"
+  time_format: "15:04:05"
+  enable_pagination: true
+  page_size: 20
+
+export:
+  enabled: false
+  format: json # Options: json, csv, prometheus
+  destination: file # Options: file, http, s3
+  interval: 60s
+  buffer_size: 1000
+  compression: false
+  batch_size: 100
+
+  prometheus:
+    enabled: false
+    port: 9090
+    path: /metrics
+    namespace: goiotop
+    subsystem: ""
+    labels: {}
+
+  file:
+    directory: ./data
+    file_pattern: "metrics_%s.json" # %s will be replaced with timestamp
+    max_file_size: 104857600 # 100MB
+    max_files: 10
+    rotate_daily: true
+    compress: false
+    buffer_size: 4096
+    flush_timeout: 5s
+
+logging:
+  level: info # Options: trace, debug, info, warn, error, fatal, panic
+  format: text # Options: text, json
+  output: stdout # Options: stdout, stderr, file
+  file: ./logs/goiotop.log
+  max_size: 100 # megabytes
+  max_age: 30 # days
+  max_backups: 10
+  compress: true
+  enable_caller: false
+  enable_stacktrace: false
+  fields: {} # Additional fields to include in all log entries
+
+repository:
+  type: memory # Options: memory, sqlite, postgres
+  connection_url: "" # Required for sqlite and postgres
+  max_connections: 10
+  max_idle_conns: 5
+  conn_max_lifetime: 30m
+  conn_max_idle_time: 10m
+  retention_days: 7 # Days to retain metrics data
+  cleanup_interval: 24h # How often to run cleanup
+
+# Alerting configuration for threshold-based alerts
+alerting:
+  enabled: true
+  evaluation_interval: 30s
+  rate_limit_window: 5m
+  max_history_size: 1000
+  default_severity: warning # Options: info, warning, critical
+
+  rules:
+    - id: high_cpu
+      name: "High CPU Usage"
+      description: "CPU usage exceeds threshold"
+      metric_type: cpu_usage
+      threshold: 80.0
+      operator: gt # gt, gte, lt, lte, eq, ne
+      duration: 60s
+      severity: warning
+      channels: ["console"]
+      enabled: true
+
+    - id: high_memory
+      name: "High Memory Usage"
+      description: "Memory usage exceeds threshold"
+      metric_type: memory_usage
+      threshold: 90.0
+      operator: gt
+      duration: 120s
+      severity: critical
+      channels: ["console"]
+      enabled: true
+
+    - id: high_load
+      name: "High System Load"
+      description: "System load average exceeds threshold"
+      metric_type: load_average_1
+      threshold: 4.0
+      operator: gt
+      duration: 300s
+      severity: warning
+      channels: ["console"]
+      enabled: true
+
+  notifications:
+    enabled: true
+    rate_limit_per_alert: 5
+    retry_attempts: 3
+    retry_delay: 5s
+
+    channels:
+      - name: console
+        type: console
+        enabled: true
+        config:
+          colored: true
+
+      # Example webhook configuration (disabled by default)
+      - name: webhook
+        type: webhook
+        enabled: false
+        config:
+          url: "https://example.com/webhook"
+          method: POST
+          timeout: 30s
+          headers:
+            Content-Type: application/json
+
+      # Example email configuration (disabled by default)
+      - name: email
+        type: email
+        enabled: false
+        config:
+          smtp_host: smtp.gmail.com
+          smtp_port: 587
+          username: ""
+          password: ""
+          from: "goiotop@example.com"
+          to: ["admin@example.com"]
+          tls: true
+
+      # Example Slack configuration (disabled by default)
+      - name: slack
+        type: slack
+        enabled: false
+        config:
+          webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+          channel: "#alerts"
+          username: "GoIOTop"
+          icon_emoji: ":computer:"
+
+# Historical metrics storage configuration
+historical:
+  enabled: true
+  system_metrics_capacity: 10000
+  process_metrics_capacity: 50000
+  cpu_pressure_capacity: 10000
+  disk_io_capacity: 10000
+  retention_period: 24h
+  aggregation_interval: 5m
+  compaction_interval: 1h
+
+# Performance optimization configuration
+optimization:
+  enable_pooling: true
+  enable_caching: true
+  cache_l1_size: 100
+  cache_l2_size: 1000
+  cache_l1_ttl: 10s
+  cache_l2_ttl: 60s
+  cache_warmup_enabled: true
+  cache_cleanup_interval: 5m
+  pool_process_metrics_size: 100
+  pool_buffer_size: 4096
+  max_memory_mb: 100

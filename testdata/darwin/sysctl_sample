@@ -1,0 +1,21 @@
+# Sample sysctl output for testing
+# This represents typical macOS system information
+
+hw.ncpu: 8
+hw.memsize: 17179869184
+hw.physicalcpu: 4
+hw.logicalcpu: 8
+hw.cpufrequency: 2600000000
+hw.busfrequency: 100000000
+hw.pagesize: 4096
+kern.ostype: Darwin
+kern.osrelease: 22.6.0
+kern.osversion: 22F82
+kern.version: Darwin Kernel Version 22.6.0: Fri Sep 15 13:41:28 PDT 2023; root:xnu-8796.141.3.700.8~1/RELEASE_ARM64_T6020
+kern.hostname: MacBook-Pro.local
+kern.boottime: { sec = 1699123456, usec = 0 } Sat Nov  4 12:34:56 2023
+vm.swapusage: total = 0.00M  used = 0.00M  free = 0.00M  (encrypted)
+vm.loadavg: { 1.23 2.34 3.45 }
+machdep.cpu.brand_string: Apple M2 Pro
+machdep.cpu.core_count: 4
+machdep.cpu.thread_count: 8

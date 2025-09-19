@@ -1,0 +1,143 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+*.cover
+*.coverprofile
+coverage.txt
+coverage.html
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Build directories
+bin/
+dist/
+build/
+release/
+
+# IDE specific files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Debug files
+debug
+debug.test
+*.pprof
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.pid
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Linux specific
+*~
+.directory
+.Trash-*
+.nfs*
+
+# Documentation build
+docs/_build/
+docs/_static/
+docs/_templates/
+*.pdf
+
+# Benchmarking
+benchmark/
+*.bench
+
+# Profiling
+*.prof
+*.cpu
+*.mem
+*.allocs
+
+# GoReleaser
+dist/
+.goreleaser.yml
+
+# Project specific
+goiotop
+goiotop-*
+*.db
+*.sqlite
+*.sqlite3
+data/
+logs/
+tmp/
+
+# Configuration files with sensitive data
+config.local.yaml
+config.local.yml
+config.local.json
+secrets.yaml
+secrets.yml
+secrets.json
+
+# Test data
+testdata/large/
+test-results/
+*.test.json
+
+# Generated files
+*_gen.go
+*_generated.go
+mock_*.go
+*.pb.go
+
+# Archives
+*.tar
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# Certificates
+*.pem
+*.key
+*.crt
+*.csr
+
+# Module cache
+go.sum.backup
+go.mod.backup
+
+# Local development
+.env.development
+.env.production
+docker-compose.override.yml
+Makefile.local

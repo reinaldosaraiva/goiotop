@@ -1,0 +1,110 @@
+# Production configuration for goiotop
+# Optimized settings for production environments
+
+app:
+  name: goiotop
+  version: 1.0.0
+  mode: production
+  shutdown_timeout: 30s # Longer timeout for graceful shutdown
+  health_check_period: 60s # Less frequent health checks
+
+collection:
+  interval: 10s # Less frequent collection in production
+  timeout: 10s
+  batch_size: 500 # Larger batches for efficiency
+  max_retries: 5
+  retry_delay: 2s
+  enable_cpu: true
+  enable_memory: true
+  enable_disk: true
+  enable_network: true
+  enable_process: true
+  enable_gpu: false
+
+  process_filter:
+    min_cpu_percent: 1.0 # Filter out low-usage processes
+    min_memory_percent: 0.5
+    exclude_kernel: true # Exclude kernel threads in production
+    top_n: 50 # Track more processes
+    include_patterns: []
+    exclude_patterns:
+      - "^\\[.*\\]$" # Kernel threads pattern
+
+  collector_options:
+    include_idle: false # Don't include idle processes
+    include_kernel: false # Don't include kernel threads
+    include_system_procs: false
+    process_limit: 200 # Higher limit for production
+    sort_by: cpu
+    min_cpu_threshold: 0.5
+    min_mem_threshold: 0.5
+    sample_duration: 2s # Longer sampling for accuracy
+    enable_pressure: true
+    enable_gpu: false
+
+display:
+  refresh_rate: 5s # Less frequent updates
+  max_rows: 50
+  show_system_stats: true
+  show_process_list: true
+  show_graphs: false # Disable graphs for performance
+  graph_history: 300s
+  color_scheme: default
+  date_format: "2006-01-02"
+  time_format: "15:04:05"
+  enable_pagination: true
+  page_size: 50
+
+export:
+  enabled: true # Enable export in production
+  format: prometheus # Prometheus for monitoring integration
+  destination: file
+  interval: 60s
+  buffer_size: 5000
+  compression: true # Enable compression to save space
+  batch_size: 500
+
+  prometheus:
+    enabled: true
+    port: 9090
+    path: /metrics
+    namespace: goiotop
+    subsystem: prod
+    labels:
+      environment: production
+      datacenter: us-east-1
+
+  file:
+    directory: /var/log/goiotop/data
+    file_pattern: "metrics_%s.json.gz"
+    max_file_size: 524288000 # 500MB
+    max_files: 30
+    rotate_daily: true
+    compress: true
+    buffer_size: 16384
+    flush_timeout: 10s
+
+logging:
+  level: warn # Only warnings and errors in production
+  format: json # JSON for log aggregation systems
+  output: file
+  file: /var/log/goiotop/goiotop.log
+  max_size: 500 # megabytes
+  max_age: 90 # days
+  max_backups: 30
+  compress: true
+  enable_caller: false
+  enable_stacktrace: false # Only for errors
+  fields:
+    environment: production
+    service: goiotop
+
+repository:
+  type: postgres # Use PostgreSQL in production
+  connection_url: "postgres://goiotop:password@localhost:5432/goiotop?sslmode=require"
+  max_connections: 25
+  max_idle_conns: 10
+  conn_max_lifetime: 60m
+  conn_max_idle_time: 15m
+  retention_days: 30 # Keep data for 30 days
+  cleanup_interval: 6h # Run cleanup 4 times per day
